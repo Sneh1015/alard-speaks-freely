@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% from "_macros.html" import ui_select %}
+{% block content %}
+{# Port of src/pages/SubmitComplaint.tsx (form view) #}
+<div class="container mx-auto px-4 py-12 max-w-2xl">
+  <div data-reveal="load" data-y="20" data-dur="0.4">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
+        {{ icon('shield', 'h-5 w-5 text-accent') }}
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold font-display text-foreground">Submit a Complaint</h1>
+        <p class="text-sm text-muted-foreground">Your identity will not be collected or stored.</p>
+      </div>
+    </div>
+
+    <div class="{{ card() }}">
+      <div class="{{ card_content('pt-6') }}">
+        <form method="post" action="/submit" class="space-y-6" data-submit-form>
+
+          <div class="space-y-2">
+            <label for="category" class="{{ label_cls() }}">Category *</label>
+            {{ ui_select('category', COMPLAINT_CATEGORIES, form.get('category', ''), 'Select a category') }}
+          </div>
+
+          <div class="space-y-2">
+            <label for="title" class="{{ label_cls() }}">Complaint Title *</label>
+            <input id="title" name="title" class="{{ input_cls() }}" placeholder="Brief summary of your complaint"
+                   value="{{ form.get('title', '') }}" maxlength="150" />
+          </div>
+
+          <div class="space-y-2">
+            <label for="description" class="{{ label_cls() }}">Detailed Description *</label>
+            <textarea id="description" name="description" class="{{ textarea_cls() }}"
+                      placeholder="Describe the issue in detail. Include dates, locations, and any relevant information."
+                      rows="6" maxlength="5000" data-char-source>{{ form.get('description', '') }}</textarea>
+            <p class="text-xs text-muted-foreground text-right"><span data-char-count>{{ form.get('description', '') | length }}</span>/5000</p>
+          </div>
+
+          <div class="space-y-2">
+            <label for="files" class="{{ label_cls() }}">Attachments (optional)</label>
+            <div class="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-accent/40 transition-colors cursor-pointer relative">
+              {# No name attribute on purpose: like the original, only the file *names* are kept #}
+              <input type="file" id="files" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
+                     class="absolute inset-0 opacity-0 cursor-pointer" data-file-input />
+              {{ icon('upload', 'h-8 w-8 text-muted-foreground mx-auto mb-2') }}
+              <p class="text-sm text-muted-foreground">
+                Click or drag files here (images, PDFs — max 5 files)
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-2" data-file-chips hidden></div>
+          </div>
+
+          <div class="rounded-lg bg-muted/50 p-4 text-sm text-muted-foreground">
+            <strong class="text-foreground">Privacy Notice:</strong> No personal identifiers (IP address, device info, or account data) are collected or stored with your complaint.
+          </div>
+
+          <button type="submit" class="{{ btn('hero', 'lg', 'w-full') }}" data-submit-button>Submit Complaint Anonymously</button>
+
+          {# hidden helpers go last so they don't disturb the space-y-6 spacing #}
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <div hidden data-file-names></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

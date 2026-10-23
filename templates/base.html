@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alard Speaks Freely | Anonymous Complaint Portal</title>
+    <meta name="description" content="Alard Speaks Freely - Anonymous Complaint Portal" />
+    <meta name="author" content="Alard Speaks Freely" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico', v='2') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/utilities.css') }}" />
+    <script>document.documentElement.classList.add('js');</script>
+  </head>
+
+  <body>
+    {# Same structure as App.tsx: <div flex flex-col min-h-screen> Header / main / Footer #}
+    <div class="flex flex-col min-h-screen">
+
+      {# ----------------------------- Header.tsx ----------------------------- #}
+      {% set nav_items = [('Home', '/'), ('Submit Complaint', '/submit'), ('Track Complaint', '/track')] %}
+      <header class="sticky top-0 z-50 glass-surface">
+        <div class="container mx-auto flex items-center justify-between px-4 py-3">
+          <a href="/" class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-hero-gradient">
+              {{ icon('shield', 'h-5 w-5 text-accent') }}
+            </div>
+            <div>
+              <h1 class="text-lg font-bold leading-tight font-display text-foreground">
+                Alard University
+              </h1>
+              <p class="text-xs text-muted-foreground font-body">
+                Anonymous Complaint Portal
+              </p>
+            </div>
+          </a>
+
+          <nav class="hidden md:flex items-center gap-1">
+            {% for label, path in nav_items %}
+            <a href="{{ path }}">
+              <button type="button" class="{{ btn('default' if current_path == path else 'ghost', 'sm') }}">{{ label }}</button>
+            </a>
+            {% endfor %}
+          </nav>
+
+          <button type="button" id="mobile-menu-toggle" class="{{ btn('ghost', 'icon', 'md:hidden') }}" aria-label="Toggle menu" aria-expanded="false">
+            <span data-menu-open>{{ icon('menu') }}</span>
+            <span data-menu-close class="hidden">{{ icon('x') }}</span>
+          </button>
+        </div>
+
+        <nav id="mobile-menu" class="hidden md:hidden border-t border-border px-4 pb-4 pt-2 flex flex-col gap-1">
+          {% for label, path in nav_items %}
+          <a href="{{ path }}">
+            <button type="button" class="{{ btn('default' if current_path == path else 'ghost', 'default', 'w-full justify-start') }}">{{ label }}</button>
+          </a>
+          {% endfor %}
+        </nav>
+      </header>
+
+      <main class="flex-1">
+        {% block content %}{% endblock %}
+      </main>
+
+      {# ----------------------------- Footer.tsx ----------------------------- #}
+      <footer class="border-t border-border bg-card mt-auto">
+        <div class="container mx-auto px-4 py-8">
+          <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+              {{ icon('shield', 'h-4 w-4 text-accent') }}
+              <span class="text-sm text-muted-foreground">
+                Alard University Anonymous Complaint Portal
+              </span>
+            </div>
+            <p class="text-xs text-muted-foreground">
+              Your identity is never collected. All submissions are encrypted and anonymous.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    {# Toast area (replaces the <Sonner /> / sonner toasts) and server flash messages #}
+    <ol id="toaster" class="toaster group" data-sonner-toaster aria-live="polite"></ol>
+    <script id="flash-data" type="application/json">{{ get_flashed_messages(with_categories=true) | tojson }}</script>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

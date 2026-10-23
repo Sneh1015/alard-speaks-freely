@@ -1,0 +1,248 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+
+/* =========================================================================
+   theme.css
+   -------------------------------------------------------------------------
+   1. Tailwind "preflight" (the CSS reset Tailwind ships with)
+   2. The design tokens, base styles and custom utilities copied 1:1 from the
+      original project's src/index.css  (colours, fonts, gradients, radius ...)
+   3. Styles for the widgets that used to come from Radix UI / sonner /
+      framer-motion (select popup, confirm dialog, toasts, scroll animations)
+
+   The Tailwind utility classes themselves (px-4, text-sm, bg-card ...) are in
+   utilities.css - the templates still use the exact same class names as the
+   original React components.
+   ========================================================================= */
+
+/* ------------------------------ 1. Preflight ------------------------------ */
+*,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}
+::before,::after{--tw-content:''}
+html,:host{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}
+body{margin:0;line-height:inherit}
+hr{height:0;color:inherit;border-top-width:1px}
+abbr:where([title]){text-decoration:underline dotted}
+h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}
+a{color:inherit;text-decoration:inherit}
+b,strong{font-weight:bolder}
+code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sub{bottom:-.25em}
+sup{top:-.5em}
+table{text-indent:0;border-color:inherit;border-collapse:collapse}
+button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}
+button,select{text-transform:none}
+button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}
+:-moz-focusring{outline:auto}
+:-moz-ui-invalid{box-shadow:none}
+progress{vertical-align:baseline}
+::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}
+[type=search]{-webkit-appearance:textfield;outline-offset:-2px}
+::-webkit-search-decoration{-webkit-appearance:none}
+::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}
+summary{display:list-item}
+blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}
+fieldset{margin:0;padding:0}
+legend{padding:0}
+ol,ul,menu{list-style:none;margin:0;padding:0}
+dialog{padding:0}
+textarea{resize:vertical}
+input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}
+button,[role="button"]{cursor:pointer}
+:disabled{cursor:default}
+img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}
+img,video{max-width:100%;height:auto}
+[hidden]{display:none!important}
+
+/* Defaults for the CSS variables that Tailwind utilities (ring, shadow, transform) rely on */
+*,::before,::after{
+  --tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;
+  --tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / .5);
+  --tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;
+  --tw-space-x-reverse:0;--tw-space-y-reverse:0;
+}
+
+/* ------------------- 2. From the original src/index.css ------------------- */
+:root {
+  --background: 220 20% 97%;
+  --foreground: 220 30% 12%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 220 30% 12%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 30% 12%;
+
+  --primary: 220 60% 22%;
+  --primary-foreground: 45 60% 95%;
+
+  --secondary: 45 50% 55%;
+  --secondary-foreground: 220 60% 12%;
+
+  --muted: 220 15% 92%;
+  --muted-foreground: 220 10% 45%;
+
+  --accent: 45 70% 52%;
+  --accent-foreground: 220 60% 12%;
+
+  --destructive: 0 72% 50%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 220 15% 88%;
+  --input: 220 15% 88%;
+  --ring: 220 60% 22%;
+
+  --radius: 0.625rem;
+
+  --sidebar-background: 220 60% 18%;
+  --sidebar-foreground: 220 10% 90%;
+  --sidebar-primary: 45 50% 55%;
+  --sidebar-primary-foreground: 220 60% 12%;
+  --sidebar-accent: 220 50% 25%;
+  --sidebar-accent-foreground: 220 10% 90%;
+  --sidebar-border: 220 40% 28%;
+  --sidebar-ring: 45 50% 55%;
+
+  /* Custom tokens */
+  --hero-gradient: linear-gradient(135deg, hsl(220 60% 22%), hsl(220 50% 32%));
+  --gold-gradient: linear-gradient(135deg, hsl(45 70% 52%), hsl(38 65% 58%));
+  --surface-elevated: 0 0% 100%;
+  --success: 152 55% 40%;
+  --success-foreground: 0 0% 100%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
+  --info: 210 80% 52%;
+  --info-foreground: 0 0% 100%;
+
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Source Sans 3', sans-serif;
+}
+
+.dark {
+  --background: 220 30% 8%;
+  --foreground: 220 10% 90%;
+  --card: 220 25% 12%;
+  --card-foreground: 220 10% 90%;
+  --popover: 220 25% 12%;
+  --popover-foreground: 220 10% 90%;
+  --primary: 45 50% 55%;
+  --primary-foreground: 220 60% 12%;
+  --secondary: 220 40% 25%;
+  --secondary-foreground: 220 10% 90%;
+  --muted: 220 20% 18%;
+  --muted-foreground: 220 10% 55%;
+  --accent: 45 70% 52%;
+  --accent-foreground: 220 60% 12%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 20% 22%;
+  --input: 220 20% 22%;
+  --ring: 45 50% 55%;
+  --sidebar-background: 220 30% 6%;
+  --sidebar-foreground: 220 10% 90%;
+  --sidebar-primary: 45 50% 55%;
+  --sidebar-primary-foreground: 220 60% 12%;
+  --sidebar-accent: 220 25% 15%;
+  --sidebar-accent-foreground: 220 10% 90%;
+  --sidebar-border: 220 20% 18%;
+  --sidebar-ring: 45 50% 55%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
+
+.text-gradient-gold {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-hero-gradient {
+  background: var(--hero-gradient);
+}
+
+.bg-gold-gradient {
+  background: var(--gold-gradient);
+}
+
+.glass-surface {
+  background: hsl(var(--surface-elevated) / 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--border) / 0.5);
+}
+
+/* ------------- 3a. framer-motion replacement (scroll / load animations) ------------- */
+/* Only active when JavaScript is running (the <html> element gets the "js" class). */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(calc(var(--rv-y, 0) * 1px)) scale(var(--rv-s, 1));
+}
+.js [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--rv-dur, .3s) ease-out var(--rv-delay, 0s),
+              transform var(--rv-dur, .3s) ease-out var(--rv-delay, 0s);
+}
+
+/* ------------- 3b. Radix <Select> popup ------------- */
+[data-select-wrapper] { position: fixed; z-index: 50; }
+.ui-select-content { transform-origin: top left; }
+.ui-select-content[data-side="bottom"] { transform: translateY(.25rem); }
+.ui-select-content[data-side="top"] { transform: translateY(-.25rem); }
+.ui-select-content[data-state="open"][data-side="bottom"] { animation: ui-enter-from-top 150ms ease; }
+.ui-select-content[data-state="open"][data-side="top"] { animation: ui-enter-from-bottom 150ms ease; }
+.ui-select-content[data-state="closed"] { animation: ui-exit-fade-zoom 150ms ease forwards; }
+@keyframes ui-enter-from-top { from { opacity: 0; transform: translate3d(0,-.5rem,0) scale3d(.95,.95,.95); } }
+@keyframes ui-enter-from-bottom { from { opacity: 0; transform: translate3d(0,.5rem,0) scale3d(.95,.95,.95); } }
+@keyframes ui-exit-fade-zoom { to { opacity: 0; transform: translate3d(0,0,0) scale3d(.95,.95,.95); } }
+
+/* ------------- 3c. Radix <AlertDialog> animations ------------- */
+[data-dialog-overlay][data-state="open"] { animation: ui-fade-in 150ms ease; }
+[data-dialog-overlay][data-state="closed"] { animation: ui-fade-out 150ms ease forwards; }
+[data-dialog-content][data-state="open"] { animation: ui-dialog-in 200ms ease; }
+[data-dialog-content][data-state="closed"] { animation: ui-dialog-out 200ms ease forwards; }
+@keyframes ui-fade-in { from { opacity: 0; } }
+@keyframes ui-fade-out { to { opacity: 0; } }
+@keyframes ui-dialog-in { from { opacity: 0; transform: translate3d(-50%,-48%,0) scale3d(.95,.95,.95); } }
+@keyframes ui-dialog-out { to { opacity: 0; transform: translate3d(-50%,-48%,0) scale3d(.95,.95,.95); } }
+
+/* ------------- 3d. sonner toasts (bottom-right, same defaults as sonner) ------------- */
+[data-sonner-toaster] {
+  position: fixed; right: 32px; bottom: 32px; width: 356px; z-index: 999999999;
+  display: flex; flex-direction: column; gap: 14px; margin: 0; padding: 0; list-style: none;
+  pointer-events: none;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+[data-sonner-toast] {
+  --y: translateY(100%);
+  pointer-events: auto; opacity: 0; transform: var(--y); box-sizing: border-box; outline: 0; overflow-wrap: anywhere;
+  transition: transform .4s, opacity .4s, height .4s, box-shadow .2s;
+}
+[data-sonner-toast][data-styled="true"] {
+  padding: 16px; width: 356px; font-size: 13px; display: flex; align-items: center; gap: 6px;
+  border-radius: 8px;
+  background: hsl(var(--background)); color: hsl(var(--foreground)); border: 1px solid hsl(var(--border));
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);
+}
+[data-sonner-toast][data-mounted="true"] { --y: translateY(0); opacity: 1; }
+[data-sonner-toast][data-removed="true"] { --y: translateY(100%); opacity: 0; }
+[data-sonner-toast] [data-icon] { display: flex; height: 16px; width: 16px; position: relative; justify-content: flex-start; align-items: center; flex-shrink: 0; margin-left: -3px; margin-right: 4px; }
+[data-sonner-toast] [data-icon] > * { flex-shrink: 0; }
+[data-sonner-toast] [data-content] { display: flex; flex-direction: column; gap: 2px; }
+[data-sonner-toast] [data-title] { font-weight: 500; line-height: 1.5; color: inherit; }
+@media (max-width: 600px) {
+  [data-sonner-toaster] { right: 16px; left: 16px; bottom: 16px; width: auto; }
+  [data-sonner-toast][data-styled="true"] { width: 100%; }
+}

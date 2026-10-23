@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block content %}
+{# Port of src/pages/Index.tsx #}
+{% set features = [
+  ('shield', '100% Anonymous', 'No login, no tracking. Your identity is never collected or stored.'),
+  ('lock', 'Encrypted & Secure', 'All complaints are securely stored with encryption at rest.'),
+  ('file-text', 'Easy Submission', 'Simple form with categories, descriptions, and optional file uploads.'),
+  ('search', 'Track Status', 'Use your unique tracking ID to check complaint status anytime.'),
+  ('eye', 'Transparent Process', 'Follow your complaint through Received, In Review, to Resolved.'),
+  ('bar-chart-3', 'Drives Change', 'Aggregated reports help the university identify and fix systemic issues.'),
+] %}
+<div class="flex flex-col">
+
+  <!-- Hero -->
+  <section class="bg-hero-gradient relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 20% 50%, hsl(45 70% 52% / 0.3), transparent 50%), radial-gradient(circle at 80% 20%, hsl(220 60% 40% / 0.4), transparent 50%);"></div>
+    <div class="container mx-auto px-4 py-20 md:py-32 relative z-10">
+      <div data-reveal="load" data-y="30" data-dur="0.7" class="max-w-2xl mx-auto text-center">
+        <div class="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 mb-6">
+          {{ icon('shield', 'h-4 w-4 text-accent') }}
+          <span class="text-sm font-medium text-accent">Safe &amp; Confidential</span>
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-primary-foreground mb-6 leading-tight">
+          Your Voice Matters.
+          <span class="text-gradient-gold">Anonymously.</span>
+        </h1>
+        <p class="text-lg md:text-xl text-primary-foreground/80 mb-10 font-body leading-relaxed">
+          Submit complaints about academic issues, harassment, infrastructure, or any concern — without revealing your identity. Together, we build a better Alard University.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/submit">
+            <button type="button" class="{{ btn('hero', 'lg', 'text-base px-8') }}">Submit a Complaint</button>
+          </a>
+          <a href="/track">
+            <button type="button" class="{{ btn('heroOutline', 'lg', 'text-base px-8') }}">Track Your Complaint</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Terms & Conditions Warning -->
+  <section class="bg-destructive/5 border-y border-destructive/20">
+    <div class="container mx-auto px-4 py-6">
+      <div data-reveal="view" data-dur="0.3" class="flex items-start gap-4 max-w-3xl mx-auto">
+        {{ icon('alert-triangle', 'h-6 w-6 text-destructive shrink-0 mt-0.5') }}
+        <div>
+          <h3 class="font-display font-semibold text-foreground mb-1">⚠️ Warning: Fake Complaints Policy</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">
+            Submitting false, misleading, or defamatory complaints is a serious violation of the university's code of conduct.
+            While complaints are anonymous, the university reserves the right to investigate patterns of abuse.
+            <strong class="text-foreground"> Consequences may include disciplinary action, suspension, or legal proceedings.</strong>
+            By using this platform you agree to submit only truthful and genuine complaints. Misuse undermines the system for everyone.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Active Complaints Feed -->
+  <section class="container mx-auto px-4 py-16">
+    <div data-reveal="view" data-y="20" data-dur="0.5" class="text-center mb-10">
+      <div class="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 mb-4">
+        {{ icon('message-square', 'h-4 w-4 text-accent') }}
+        <span class="text-sm font-medium text-accent">Live Feed</span>
+      </div>
+      <h2 class="text-3xl md:text-4xl font-bold font-display text-foreground mb-3">
+        Active Complaints
+      </h2>
+      <p class="text-muted-foreground max-w-lg mx-auto">
+        See what's currently being addressed. Join the discussion by leaving comments.
+      </p>
+    </div>
+
+    {% if not complaints %}
+      <p class="text-center text-muted-foreground py-8">No active complaints right now. All clear! 🎉</p>
+    {% else %}
+      <div class="grid md:grid-cols-2 gap-4 max-w-5xl mx-auto"
+           data-class-author="{{ input_cls('w-32 text-xs h-8') }}"
+           data-class-content="{{ input_cls('flex-1 text-xs h-8') }}"
+           data-class-send="{{ btn('outline', 'sm', 'h-8 px-2') }}">
+        {% for c in complaints %}
+        {% set status_label, status_color = STATUS_CONFIG[c['status']] %}
+        <div data-reveal="view" data-y="15" data-dur="0.3" data-delay="{{ (loop.index0 * 0.05) | round(2) }}">
+          <div class="{{ card('hover:shadow-md transition-shadow') }}">
+            <div class="{{ card_content('pt-5 pb-4') }}">
+              <div class="flex items-start justify-between gap-3 mb-2">
+                <div class="min-w-0">
+                  <p class="font-semibold text-foreground text-sm truncate">{{ c['title'] }}</p>
+                  <p class="text-xs text-muted-foreground font-mono">{{ c['tracking_id'] }}</p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <div class="{{ badge('outline', 'text-[10px]') }}">{{ c['category'] | category_label }}</div>
+                  <div class="{{ badge('default', status_color ~ ' text-[10px]') }}">{{ status_label }}</div>
+                </div>
+              </div>
+              <p class="text-xs text-muted-foreground line-clamp-2 mb-2">{{ c['description'] }}</p>
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] text-muted-foreground"><time data-fmt="date" datetime="{{ c['created_at'] }}">{{ c['created_at'][:10] }}</time></span>
+                <button type="button" class="text-xs text-accent hover:underline flex items-center gap-1" data-comments-toggle data-complaint-id="{{ c['id'] }}">
+                  {{ icon('message-square', 'h-3 w-3') }}
+                  Comments
+                </button>
+              </div>
+              <div data-comments-root hidden></div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- Features -->
+  <section class="bg-secondary/10 border-t border-border">
+    <div class="container mx-auto px-4 py-20">
+      <div data-reveal="view" data-y="20" data-dur="0.5" class="text-center mb-14">
+        <h2 class="text-3xl md:text-4xl font-bold font-display text-foreground mb-4">
+          How It Works
+        </h2>
+        <p class="text-muted-foreground max-w-lg mx-auto">
+          A safe, transparent, and efficient process to address your concerns.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for ic, title, description in features %}
+        <div data-reveal="view" data-y="20" data-dur="0.4" data-delay="{{ (loop.index0 * 0.1) | round(2) }}"
+             class="rounded-xl border border-border bg-card p-6 hover:shadow-lg hover:border-accent/40 transition-all duration-300">
+          <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-accent/10 mb-4">
+            {{ icon(ic, 'h-5 w-5 text-accent') }}
+          </div>
+          <h3 class="font-display font-semibold text-lg text-card-foreground mb-2">{{ title }}</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">{{ description }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Authorities Portal -->
+  <section class="border-t border-border">
+    <div class="container mx-auto px-4 py-16">
+      <div data-reveal="view" data-y="20" data-dur="0.5" class="max-w-xl mx-auto text-center">
+        <div class="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 mb-4">
+          {{ icon('user-cog', 'h-4 w-4 text-primary') }}
+          <span class="text-sm font-medium text-primary">For University Authorities</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-bold font-display text-foreground mb-4">
+          Authorities Portal
+        </h2>
+        <p class="text-muted-foreground mb-4">
+          Authorized university officials can log in to view, manage, and resolve submitted complaints securely.
+        </p>
+        <a href="/admin/login">
+          <button type="button" class="{{ btn('default', 'lg', 'text-base px-8 gap-2') }}">
+            {{ icon('log-in', 'h-5 w-5') }} Sign In as Authority
+          </button>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="bg-card border-t border-border">
+    <div class="container mx-auto px-4 py-16 text-center">
+      <h2 class="text-2xl md:text-3xl font-bold font-display text-foreground mb-4">
+        Ready to speak up?
+      </h2>
+      <p class="text-muted-foreground mb-8 max-w-md mx-auto">
+        Your complaint is anonymous and confidential. Help us improve Alard University.
+      </p>
+      <a href="/submit">
+        <button type="button" class="{{ btn('hero', 'lg', 'text-base px-10') }}">Submit Now</button>
+      </a>
+    </div>
+  </section>
+</div>
+{% endblock %}

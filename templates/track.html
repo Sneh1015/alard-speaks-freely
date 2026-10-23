@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% from "_macros.html" import alert_dialog, alert_dialog_trigger %}
+{% block content %}
+{# Port of src/pages/TrackComplaint.tsx #}
+<div class="container mx-auto px-4 py-12 max-w-2xl">
+  <div data-reveal="load" data-y="20" data-dur="0.4">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
+        {{ icon('search', 'h-5 w-5 text-accent') }}
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold font-display text-foreground">Track Your Complaint</h1>
+        <p class="text-sm text-muted-foreground">Enter your tracking ID to check the status.</p>
+      </div>
+    </div>
+
+    <div class="{{ card('mb-8') }}">
+      <div class="{{ card_content('pt-6') }}">
+        <form method="get" action="/track" class="flex gap-3">
+          <input name="id" class="{{ input_cls('font-mono text-base') }}" placeholder="Enter tracking ID (e.g., ALU-XXXXXXXX)"
+                 value="{{ query }}" data-uppercase autocomplete="off" />
+          <button type="submit" class="{{ btn('default') }}">Search</button>
+        </form>
+      </div>
+    </div>
+
+    {% if searched and not complaint %}
+    <div data-reveal="load" data-dur="0.3">
+      <div class="{{ card('border-destructive/30') }}">
+        <div class="{{ card_content('pt-6 flex items-center gap-4') }}">
+          {{ icon('alert-circle', 'h-8 w-8 text-destructive shrink-0') }}
+          <div>
+            <p class="font-semibold text-foreground">Complaint Not Found</p>
+            <p class="text-sm text-muted-foreground">
+              No complaint found with this tracking ID. Please check and try again.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if searched and complaint %}
+    {% set status_label, status_color = STATUS_CONFIG[complaint['status']] %}
+    <div data-reveal="load" data-y="10" data-dur="0.3">
+      <div class="{{ card() }}">
+        <div class="{{ card_header() }}">
+          <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h3 class="{{ card_title('font-display text-xl') }}">{{ complaint['title'] }}</h3>
+              <p class="{{ card_description('font-mono') }}">{{ complaint['tracking_id'] }}</p>
+            </div>
+            <div class="{{ badge('default', status_color) }}">{{ status_label }}</div>
+          </div>
+        </div>
+        <div class="{{ card_content('space-y-6') }}">
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p class="text-muted-foreground">Category</p>
+              <p class="font-medium text-foreground">{{ complaint['category'] | category_label }}</p>
+            </div>
+            <div>
+              <p class="text-muted-foreground">Submitted</p>
+              <p class="font-medium text-foreground"><time data-fmt="date" datetime="{{ complaint['created_at'] }}">{{ complaint['created_at'][:10] }}</time></p>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-sm text-muted-foreground mb-2">Description</p>
+            <p class="text-sm text-foreground bg-muted/50 rounded-lg p-4 whitespace-pre-wrap">{{ complaint['description'] }}</p>
+          </div>
+
+          {% if history %}
+          <div>
+            <p class="text-sm text-muted-foreground mb-3">Status Timeline</p>
+            <div class="space-y-3">
+              {% for entry in history %}
+              <div class="flex items-start gap-3">
+                <div class="mt-0.5">
+                  {% if loop.last %}
+                    {{ icon('check-circle-2', 'h-4 w-4 text-success') }}
+                  {% else %}
+                    {{ icon('clock', 'h-4 w-4 text-muted-foreground') }}
+                  {% endif %}
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-foreground">{{ STATUS_CONFIG[entry['status']][0] }}</p>
+                  <p class="text-xs text-muted-foreground"><time data-fmt="datetime" datetime="{{ entry['created_at'] }}">{{ entry['created_at'][:19] | replace('T', ' ') }}</time></p>
+                  {% if entry['note'] %}
+                  <p class="text-xs text-muted-foreground mt-1">{{ entry['note'] }}</p>
+                  {% endif %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Delete complaint -->
+          <div class="border-t border-border pt-4">
+            <form id="delete-complaint-form" method="post" action="/track/delete" hidden>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              <input type="hidden" name="tracking_id" value="{{ complaint['tracking_id'] }}" />
+            </form>
+            {{ alert_dialog_trigger('delete-dialog') }}
+            {% call alert_dialog('delete-dialog', 'delete-complaint-form', 'Delete this complaint?') %}
+              This will permanently delete your complaint <span class="font-mono font-bold">{{ complaint['tracking_id'] }}</span>. This action cannot be undone.
+            {% endcall %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
