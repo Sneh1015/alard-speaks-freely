@@ -1,82 +1,70 @@
-# Alard Speaks Freely (Alard University Anonymous Complaint Portal) - Python / Flask
+# Alard Speaks Freely
+### Anonymous Student Complaint Portal
 
-This is the original Lovable project (React + Vite + Tailwind + Supabase) converted to
-**Python, Flask, SQLite, Jinja2 templates and a little vanilla JavaScript**.
-The design is carried over by keeping the original design tokens and the exact same
-Tailwind class names in the templates.
+Alard Speaks Freely is a web-based platform developed to provide students with a structured channel for expressing concerns related to academics, faculty behaviour, campus infrastructure, sanitation, and other college-related issues.
 
-## Run it in VS Code on Windows
+The project aims to promote transparent communication, encourage accountability, and contribute to a more inclusive and student-friendly campus environment.
 
-1. Install Python 3.10+ from python.org (tick **"Add python.exe to PATH"**).
-2. In VS Code: **File > Open Folder...** and choose this folder.
-3. Open a terminal (**Terminal > New Terminal**, PowerShell) and run:
+## Live Website
 
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-copy .env.example .env
-python app.py
-```
+**[Visit Alard Speaks Freely](https://alard-speaks-freely.onrender.com)**
 
-> If PowerShell blocks `Activate.ps1`, run once:
-> `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, or use `.venv\Scripts\activate.bat` in Command Prompt.
+## Key Features
 
-4. Open <http://127.0.0.1:5000>.
+- **Complaint Submission:** Submit concerns related to academics, faculty behaviour, infrastructure, sanitation, and campus facilities.
+- **Complaint Tracking:** Track submitted complaints using the available tracking functionality.
+- **Administrative Dashboard:** Access administrative tools for complaint management and status updates.
+- **User-Friendly Interface:** A clean and intuitive interface designed for ease of use.
+- **Privacy-Conscious Design:** Designed with the goal of supporting confidential complaint reporting.
 
-The SQLite database is created automatically at `instance/alard.db`.
-The Google Fonts (Playfair Display, Source Sans 3) load from the internet, as in the original.
+## Technology Stack
 
-### Admin ("Authorities") login
-Supabase auth was replaced by a local `admin_users` table. On first run an account is created from
-`ADMIN_EMAIL` / `ADMIN_PASSWORD` in `.env` (default `admin@alard.edu` / `ChangeMe123!`).
-**Change the password in `.env` before the first run**, or add more accounts with:
-
-```powershell
-flask --app app create-admin
-```
-
-## Project structure
-
-```
-app.py            Flask routes, admin login, CSRF, comment API
-database.py       SQLite schema + queries (replaces Supabase)
-ui.py             Rebuilds the shadcn/ui class strings (cva + tailwind-merge) for Jinja
-icons.py          Lucide icons as inline SVG (same glyphs as lucide-react)
-templates/        Jinja2 pages (one per original React page) + base layout
-static/css/theme.css       Original index.css tokens/fonts/base + Tailwind reset + widget styles
-static/css/utilities.css   Tailwind utility classes used by the templates
-static/js/app.js           Select, dialogs, toasts, animations, comments, menu
-static/images/    favicon.ico, placeholder.svg (original assets)
-```
-
-## What was converted
-
-| Original | Now |
+| Component | Technology |
 |---|---|
-| Supabase tables `complaints`, `complaint_status_history`, `complaint_comments` | SQLite tables of the same name (`database.py`) |
-| Supabase auth + `user_roles` | `admin_users` table, Flask sessions, hashed passwords |
-| Row-level-security rules | Flask route checks (`@admin_required`) |
-| React Router pages | Flask routes: `/`, `/submit`, `/track`, `/admin/login`, `/admin`, 404 |
-| React components / shadcn UI | Jinja templates + `ui.py` class builders |
-| Radix Select / AlertDialog | HTML + `static/js/app.js` |
-| framer-motion fade/slide | CSS transitions triggered by `app.js` |
-| sonner toasts | small toast function in `app.js` (+ Flask `flash()` messages) |
+| Backend | Python, Flask |
+| Frontend | HTML, CSS, JavaScript |
+| Templating Engine | Jinja2 |
+| Database | SQLite |
+| Deployment | Render |
+| Version Control | Git, GitHub |
 
-**Retained as-is:** all copy/text, layout, colour tokens, fonts, gradients, icons, favicon, robots.txt,
-tracking-ID format (`ALU-XXXXXXXX`), categories and statuses.
+## Project Structure
 
-## Behaviour carried over from the original (read this)
+```text
+alard-speaks-freely/
+├── app.py
+├── database.py
+├── ui.py
+├── icons.py
+├── requirements.txt
+├── templates/
+├── static/
+│   ├── css/
+│   ├── js/
+│   └── images/
+├── instance/
+└── README.md
+```
 
-These are faithful to the original app; you may want to change them:
+## Project Objectives
 
-* **The "Personal remark (internal note)" box is not private.** It is saved into the status note and
-  shown on the public tracking timeline as `[Remark] ...`.
-* **Anyone who knows a tracking ID can read and delete that complaint.** Tracking IDs are also
-  displayed on the public home-page feed, so any visitor can delete active complaints.
-* **Attachments are not uploaded.** Only file *names* (max 5) are stored, never the files.
-* Home-page comments need no login. Anyone can post one.
-* Admin dashboard statistics count the currently filtered list.
+- Provide students with an accessible platform for raising concerns.
+- Encourage accountability and continuous improvement in campus facilities.
+- Promote fair treatment and respectful communication.
+- Support a more inclusive and responsive campus environment.
 
-Small additions needed because Supabase is gone: CSRF protection on forms, and a basic limit on
-repeated failed admin logins.
+## Deployment
+
+The application is deployed on Render and can be accessed through the following link:
+
+**Live URL:** https://alard-speaks-freely.onrender.com
+
+## Privacy and Security
+
+Student confidentiality is an important consideration in the design of this platform. Appropriate access controls, secure complaint handling, and reliable data storage are necessary to protect submitted information.
+
+The application is currently undergoing testing. Its privacy protections and data persistence should be verified before it is used for real student complaints.
+
+## Disclaimer
+
+This is a student-developed project intended to facilitate campus feedback and complaint reporting. It does not represent an official college grievance mechanism unless formally adopted by the institution.
